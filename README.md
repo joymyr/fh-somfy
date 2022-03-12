@@ -13,12 +13,17 @@ Currently supported devices is screens and light sensors.
 
 ## Setup
 
-* First enable local api in the Futurehome hub settings
-* Then install this project on a local device:
+* Enable local api in the Futurehome hub settings
+* Install Python3 on a local device
+```
+# Example for Debian-based systems
+sudo apt-get install python3 python3-pip
+```
+
+* Install this project and required dependencies
 ```bash
-pip install pyoverkiz
-pip install paho-mqtt
-git clone <this repo>
+pip3 install pyoverkiz paho-mqtt
+git clone https://github.com/joymyr/fh-somfy.git
 ```
 
 ## Configuration
@@ -38,5 +43,17 @@ MQ_PASSWORD = "<Futurehome mq password>"
 Run the code
 
 ```
-python main.py
+python3 main.py
+```
+
+## Run on boot
+
+Use systemctl to run the code on boot.
+The fh_somfy.service file is intended for a Raspberry Pi.
+
+```
+sudo cp fh_somfy.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/fh_somfy.service
+sudo systemctl daemon-reload
+sudo systemctl enable fh_somfy.service
 ```

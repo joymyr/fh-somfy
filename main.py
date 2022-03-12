@@ -1,6 +1,7 @@
 import asyncio
 import time
 import json
+from typing import List
 import paho.mqtt.client as mqtt
 
 from pyoverkiz.const import SUPPORTED_SERVERS
@@ -9,7 +10,7 @@ from pyoverkiz.models import Device, Command
 
 from const import *
 
-devices: list[Device]
+devices: List[Device]
 updateAll = False
 fh_to_somfy_command_queue = []
 mqclient = mqtt.Client()
@@ -52,7 +53,7 @@ async def event_loop() -> None:
             print(somfy_events)
             if any(event.name == "DeviceStateChangedEvent" for event in somfy_events):
                 await somfy_to_fh_update_all()
-            time.sleep(2)
+            time.sleep(1)
 
 
 # The callback for when the client receives a CONNACK response from the server.

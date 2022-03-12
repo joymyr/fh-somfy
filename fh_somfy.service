@@ -1,0 +1,11 @@
+ [Unit]
+ Description=Somfy integration for Futurehome
+ After=multi-user.target
+
+ [Service]
+ Type=idle
+ ExecStart=bash -c '/usr/bin/python3 -u /home/pi/fh-somfy/main.py > /home/pi/fh-somfy.log 2>&1' &
+ User=pi
+
+ [Install]
+ WantedBy=multi-user.target
