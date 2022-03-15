@@ -43,16 +43,26 @@ async def somfy_init() -> None:
 
 async def event_loop() -> None:
     async with somfyClient as client:
+        print("Waiting for events...")
         while True:
-            if updateAll:
-                await somfy_to_fh_update_all()
-            for command in list(fh_to_somfy_command_queue):
-                fh_to_somfy_command_queue.remove(command)
-                await somfyClient.execute_command(command[0], command[1])
-            somfy_events = await client.fetch_events()
-            print(somfy_events)
-            if any(event.name == "DeviceStateChangedEvent" for event in somfy_events):
-                await somfy_to_fh_update_all()
+            try:
+                somfy_events = await client.fetch_events()
+                if updateAll or len(fh_to_somfy_command_queue) > 0 or len(somfy_events) > 0:
+                    if updateAll:
+                        print("Updating all devices")
+                        await somfy_to_fh_update_all()
+                    for command in list(fh_to_somfy_command_queue):
+                        print(f"Executing command: {command[1]}")
+                        await client.execute_command(command[0], command[1])
+                        fh_to_somfy_command_queue.remove(command)
+                    print(f"Somfy-events: {somfy_events}")
+                    if any(event.name == "DeviceStateChangedEvent" for event in somfy_events):
+                        print("Updating all devices")
+                        await somfy_to_fh_update_all()
+                    print("Waiting for new events...")
+            except Exception as err:
+                print(f"Unexpected {err}, {type(err)}")
+                print("Waiting for new events...")
             time.sleep(1)
 
 
